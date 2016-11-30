@@ -50,6 +50,8 @@ public class Gun : MonoBehaviour {
         shot.origin = transform.position;
         shot.direction = transform.forward;
 
+        Debug.Log("Gunshot");
+
         if (Physics.Raycast (shot, out rayInfo, maxDistance)) {
             EnemyController target = rayInfo.collider.GetComponent<EnemyController>();
             if (target != null) {

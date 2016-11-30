@@ -17,6 +17,11 @@ public class KeyboardButton : MonoBehaviour {
 
     public void OnClick() {
 
+        if(LeaderboardScript.keyTimer > 0)
+            return;
+        else
+            LeaderboardScript.keyTimer = keyCooldown;
+
         Debug.Log("Clicked: " + key);
 
         if(isReturn) {

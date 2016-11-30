@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour {
     Gun myGun;
 
     [SerializeField]
-    private float shootDelay = 0.1f;
+    private float shootDelay;
 
     [SerializeField]
     private float regenRate = 0.05f;
@@ -64,7 +64,7 @@ public class PlayerController : MonoBehaviour {
         //Rotates Body with Camera
         myBody.transform.localRotation = myCamera.transform.localRotation;
 
-        if (shootCooldown > 0.0f) shootCooldown -= Time.deltaTime;
+        if (shootCooldown > 0.0f) shootCooldown = shootCooldown - Time.deltaTime;        
         if (regenCooldown > 0.0f) regenCooldown -= Time.deltaTime;        
 
         if(!isDead) {
@@ -74,13 +74,11 @@ public class PlayerController : MonoBehaviour {
         }               
 
         if (Input.GetMouseButtonDown(0)) {
-            Shoot();
+            Shoot();            
             StartGame();
-        }
-
-        /*
-                
+        }                
         
+        /*
         if(Input.GetKey(KeyCode.W)) {
             transform.Rotate(-5.0f, 0.0f, 0.0f, Space.World);
         }
@@ -114,6 +112,7 @@ public class PlayerController : MonoBehaviour {
             transform.localEulerAngles = new Vector3(-rotationY, transform.localEulerAngles.y, 0);
         }        
         */
+        
     }
 
     void showDamage() {        
@@ -159,8 +158,9 @@ public class PlayerController : MonoBehaviour {
 
         if (shootCooldown > 0.0f) {
             return;
-        }            
-        shootCooldown = shootDelay;
+        }
+
+        shootCooldown = shootDelay; 
 
         myGun.gunShot();
     }

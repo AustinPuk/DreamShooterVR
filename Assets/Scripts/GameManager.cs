@@ -122,6 +122,7 @@ public class GameManager : MonoBehaviour {
         score = 0;
         spawnTimer = 0;
         spawnCount = 0;
+        killCount = 0;
         pauseTimer = pauseLength;
         StartGame();
     }

@@ -13,7 +13,11 @@ public class KeyboardButton : MonoBehaviour {
     [SerializeField]
     bool isBack;
 
+    float keyCooldown = 0.5f;       
+
     public void OnClick() {
+
+        Debug.Log("Clicked: " + key);
 
         if(isReturn) {
             //Can Only do once

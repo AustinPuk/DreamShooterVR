@@ -17,6 +17,7 @@ public class LeaderboardScript : MonoBehaviour {
 
     public static string currentPlayer;
     public static bool updatedScore; //Can only update once per game
+    public static float keyTimer;
 
     private int[] topScores = new int[10];
     private string[] topNames = new string[10];
@@ -25,6 +26,7 @@ public class LeaderboardScript : MonoBehaviour {
         instance = this;
         currentPlayer = "ZZZ";
         updatedScore = false;
+        keyTimer = 0;
     }
 
 	// Use this for initialization
@@ -43,14 +45,25 @@ public class LeaderboardScript : MonoBehaviour {
                 topNames[i] = "ZZZ";
             }                
         }
-            
+
+        //Updates Text on Leaderboard
+        myText.text = "Leaderboard \n";
+        for (int i = 0; i < 10; i++) {
+            myText.text += topNames[i] + " " + topScores[i].ToString("0000000") + "\n";
+        }
+
     }    
 
     void Update() {
         playerText.text = currentPlayer;
+        if (keyTimer >= 0) keyTimer -= Time.deltaTime;
     }
 	
 	public void UpdateScores () {
+
+        //Can only update once per game
+        if (updatedScore)
+            return;
 
         updatedScore = true;
 

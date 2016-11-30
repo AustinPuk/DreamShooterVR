@@ -116,9 +116,13 @@ public class GameManager : MonoBehaviour {
     public void ResetGame() {
         Debug.Log("ResetGame");
         endMenu.SetActive(false);
-        currentLevel = 1;
+        currentLevel = 1;        
+        currentStep = 1;
         currDelay = spawnDelays[0];
         score = 0;
+        spawnTimer = 0;
+        spawnCount = 0;
+        pauseTimer = pauseLength;
         StartGame();
     }
 
@@ -208,13 +212,14 @@ public class GameManager : MonoBehaviour {
             case 5: //Elephants Storm
                 switch (currentStep) {
                     case 1:
-                        SpawnEnemy(elephant, 2); //Spawn 1 Elephant                        
+                        SpawnEnemy(elephant, 2); //Spawn 1 Elephant
+                        SpawnEnemy(elephant, 8); //Spawn 1 Elephant
                         spawnTimer = currDelay / 3.0f;
                         currentStep++;
                         break;
                     case 2:
                         SpawnEnemy(bunny, 1); //Spawn 3 Bunnies to compare speed and health
-                        SpawnEnemy(bunny, 2); 
+                        SpawnEnemy(bear, 5); 
                         SpawnEnemy(bunny, 3);
                         spawnTimer = currDelay;
                         currentStep++;

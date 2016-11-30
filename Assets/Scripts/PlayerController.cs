@@ -71,12 +71,14 @@ public class PlayerController : MonoBehaviour {
             showDamage();
             healthRegen();
             checkDeath();
-        }        
+        }               
 
         if (Input.GetMouseButtonDown(0)) {
             Shoot();
             StartGame();
         }
+
+        /*
                 
         
         if(Input.GetKey(KeyCode.W)) {
@@ -111,6 +113,7 @@ public class PlayerController : MonoBehaviour {
 
             transform.localEulerAngles = new Vector3(-rotationY, transform.localEulerAngles.y, 0);
         }        
+        */
     }
 
     void showDamage() {        
@@ -167,7 +170,6 @@ public class PlayerController : MonoBehaviour {
             alreadyStart = true;
             startButton.OnClick();
         }
-
     }
 
     IEnumerator deathFade() {

@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
@@ -8,27 +7,33 @@ public class GameManager : MonoBehaviour {
     public GameObject player { get; private set; }
 
     [SerializeField]
-    public GameObject endMenu;
+    public GameObject endMenu;    
 
     [SerializeField]
-    private int maxLevel; 
+    private GameObject openingUI;
+
+    [SerializeField]
+    private GameObject scoreBoard;
+
+    [SerializeField]
+    private int seed;
+
+    [SerializeField]
+    private float pauseLength;
+
+    [SerializeField]
+    private int maxLevel;
 
     [SerializeField]
     private float[] spawnDelays;
 
     [SerializeField]
-    private Transform[] spawnPoints;
-
-    [SerializeField]
     private int[] killsRequired;
 
     [SerializeField]
-    private Text scoreText;
+    private Transform[] spawnPoints;    
 
-    [SerializeField]
-    private GameObject openingUI;
-
-    private GameObject[] enemies = new GameObject[2];
+    private GameObject[] enemies = new GameObject[3];
 
     public static bool gamePause;
     public static int score;
@@ -36,17 +41,27 @@ public class GameManager : MonoBehaviour {
     public static int killCount;
 
     private float currDelay;
-    
+    private float spawnTimer;
+    private float pauseTimer;
+    private int currentStep;
+    private int spawnCount;
 
     void Awake() {
         instance = this;
         player = GameObject.FindGameObjectWithTag("Player");
         enemies[0] = Resources.Load<GameObject>("Prefabs/" + "ZomBear");
         enemies[1] = Resources.Load<GameObject>("Prefabs/" + "Zombunny");
+        enemies[2] = Resources.Load<GameObject>("Prefabs/" + "Hellephant");
         endMenu.SetActive(false);
         currentLevel = 1;
+        currentStep = 1;
         currDelay = spawnDelays[0];
-        score = 0;
+        score = 0;       
+        gamePause = true;
+        scoreBoard.SetActive(false);
+        spawnTimer = 0;
+        pauseTimer = pauseLength;
+        spawnCount = 0;
     }
 
     void Start() {
@@ -54,30 +69,37 @@ public class GameManager : MonoBehaviour {
         StartGame();
     }
 
-    void Update() {        
-        if (killCount >= killsRequired[currentLevel - 1]) {            
+    void Update() {
+
+        if (spawnTimer > 0) spawnTimer -= Time.deltaTime;
+        if (pauseTimer > 0) pauseTimer -= Time.deltaTime;
+
+
+        if (gamePause && pauseTimer <= 0)
+            gamePause = false;
+        
+        if (!gamePause && spawnTimer <= 0)
+            WaveManager();        
+
+        //Level Up
+        if (killCount >= killsRequired[currentLevel - 1]) {
             if (currentLevel < maxLevel) currentLevel++;
-            Debug.Log("Level:" + currentLevel);
+            Debug.Log("Current Level:" + currentLevel);
             currDelay = spawnDelays[currentLevel - 1];
             killCount = 0;
-        }
-        scoreText.text = score.ToString("00000000");
-    }
-
-    IEnumerator SpawnEnemies() {
-        while (true) {            
-            int i = Random.Range(0, spawnPoints.Length);           
-            Vector3 spawnPos = spawnPoints[i].position;
-            i = Random.Range(0, enemies.Length);
-            if(!gamePause) {
-                Instantiate(enemies[i], spawnPos, Quaternion.identity);
-            }                
-            yield return new WaitForSeconds(currDelay);               
+            spawnCount = 0;
+            currentStep = 1;
+            //Pause before next 
+            gamePause = true;
+            pauseTimer = pauseLength;
+        } 
+        
+        if(endMenu.activeSelf) {
+            scoreBoard.SetActive(false);
         }
     }
 
-    public void PauseGame() {
-        StopCoroutine(SpawnEnemies());
+    public void PauseGame() {        
         gamePause = true;
     }
 
@@ -91,9 +113,160 @@ public class GameManager : MonoBehaviour {
     }
 
     public void StartGame() {
+        scoreBoard.SetActive(true);
         Debug.Log("StartGame");
-        StartCoroutine(SpawnEnemies());
-        gamePause = false;
+        Random.InitState(seed);
+        gamePause = false;        
+    }
+
+    void WaveManager() {
+
+        int bear = 1;
+        int bunny = 2;
+        int elephant = 3;
+
+        if (spawnCount >= killsRequired[currentLevel - 1])
+            currentStep++;
+
+        //Each level manually designed. This could've been done more efficiently...
+        switch (currentLevel) {
+            case 1: //Tutorial Wave
+                switch (currentStep) {
+                    case 1: 
+                        SpawnEnemy(bear, 11); //Spawn bear far away
+                        spawnTimer = currDelay;
+                        currentStep++;
+                        break;
+                    case 2:
+                        SpawnEnemy(bear, 9); //Quick Spawn Bears
+                        spawnTimer = currDelay / 3.0f;
+                        currentStep++;
+                        break;
+                    case 3:
+                        SpawnEnemy(bear, 15);
+                        spawnTimer = currDelay / 3.0f;
+                        currentStep++;
+                        break;
+                    case 4:
+                        SpawnEnemy(bear, 4);
+                        spawnTimer = currDelay / 3.0f;
+                        currentStep++;
+                        break;            
+                    default:
+                        break;
+                }
+                break;
+            case 2: //Beginner Round                
+                switch (currentStep) {
+                    case 1:
+                        SpawnEnemy(bear, 0); //Spawn random bear
+                        spawnTimer = currDelay;
+                        break;            
+                    default:
+                        break;
+                }
+                break;
+            case 3: //Bunny Invasion
+                switch (currentStep) {
+                    case 1:
+                        SpawnEnemy(bunny, 11); //Spawn 3 Bunnies far away
+                        SpawnEnemy(bunny, 9); //Spawn 3 Bunnies far away
+                        SpawnEnemy(bunny, 12); //Spawn 3 Bunnies far away
+                        spawnTimer = currDelay;
+                        currentStep++;
+                        break;
+                    case 2:
+                        SpawnEnemy(bear, 0); //Quick Spawn Bears and Bunnies
+                        SpawnEnemy(bunny, 0);
+                        spawnTimer = currDelay / 2.0f;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 4: //Intermediate Wave
+                switch (currentStep) {
+                    case 1:
+                        SpawnEnemy(Random.Range(1, 3), 0); //Spawn random bears or bunnies in bursts of 2
+                        SpawnEnemy(Random.Range(1, 3), 0); 
+                        spawnTimer = currDelay;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 5: //Elephants Storm
+                switch (currentStep) {
+                    case 1:
+                        SpawnEnemy(elephant, 2); //Spawn 1 Elephant                        
+                        spawnTimer = currDelay / 3.0f;
+                        currentStep++;
+                        break;
+                    case 2:
+                        SpawnEnemy(bunny, 1); //Spawn 3 Bunnies to compare speed and health
+                        SpawnEnemy(bunny, 2); 
+                        SpawnEnemy(bunny, 3);
+                        spawnTimer = currDelay;
+                        currentStep++;
+                        break;
+                    case 3:
+                        SpawnEnemy(0, 0); //Spawn Random Enemy and Elephant
+                        SpawnEnemy(elephant, 0); 
+                        spawnTimer = currDelay;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 6: //Advanced Round
+                switch (currentStep) {
+                    case 1:
+                        SpawnEnemy(0, 0); //Spawn random bears or bunnies in bursts
+                        SpawnEnemy(Random.Range(1, 3), 0); 
+                        SpawnEnemy(Random.Range(1, 3), 0);
+                        SpawnEnemy(elephant, 0);
+                        spawnTimer = currDelay;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case 7: //Impossible Round
+                switch (currentStep) {
+                    case 1: //Die
+                        SpawnEnemy(0, 0); //Continous Random Enemies
+                        spawnTimer = currDelay;
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            default:
+                break;
+        }        
+    }
+
+    //Spawns a single enemy with given parameters or at random
+    void SpawnEnemy(int enemyType = 0, int spawnPoint = 0) {
+
+        int i;
+
+        //Chooose Spawnpoint
+        if (spawnPoint > 0 && spawnPoint <= spawnPoints.Length)
+            i = spawnPoint - 1;
+        else
+            i = Random.Range(0, spawnPoints.Length);
+        Vector3 spawnPos = spawnPoints[i].position;
+
+        //Choose Enemy Type
+        if (enemyType > 0 && enemyType <= enemies.Length)
+            i = enemyType - 1;
+        else
+            i = Random.Range(0, enemies.Length);
+
+        //Spawn
+        Instantiate(enemies[i], spawnPos, Quaternion.identity);
+        spawnCount++;
     }
 
 }

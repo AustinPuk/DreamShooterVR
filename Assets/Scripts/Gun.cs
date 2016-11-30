@@ -13,7 +13,8 @@ public class Gun : MonoBehaviour {
     [SerializeField]
     private float maxDistance = 30.0f;
 
-    private float effectDelay = 0.03f;
+    [SerializeField]
+    private float effectDelay;
 
     private float timer;
 

@@ -15,12 +15,20 @@ public class EnemyController : MonoBehaviour {
     [SerializeField]
     private ParticleSystem blood;
 
+    [SerializeField]
+    public float defense = 0.0f;
+
+    [SerializeField]
+    private float strength = 10.0f;
+
+    [SerializeField]
+    private float hitRate = 3.0f;
+
     private Animator myAnimator;
 
     private bool isSinking = false;
     private float sinkSpeed = 2.5f;
-
-    private float hitRate = 3.0f;
+    
     private float hitCooldown;
 
     private float maxHealth;
@@ -64,8 +72,8 @@ public class EnemyController : MonoBehaviour {
             else {
                 //Attacking Player
                 if (hitCooldown <= 0.0f) {
-                    Debug.Log("Attacking Player");
-                    GameManager.instance.player.GetComponent<PlayerController>().health -= 10.0f;
+                    //Debug.Log("Attacking Player");
+                    GameManager.instance.player.GetComponent<PlayerController>().health -= strength;
                     StartCoroutine(GameManager.instance.player.GetComponent<PlayerController>().flashDamage());
                     hitCooldown = hitRate;
                 }
@@ -75,7 +83,7 @@ public class EnemyController : MonoBehaviour {
 
     public void takeDamage() {
         if (!isDead) {
-            health -= 10.0f;
+            health -= (10 - defense);
             blood.Stop();
             blood.Play();
             if (health <= 0.0f) {

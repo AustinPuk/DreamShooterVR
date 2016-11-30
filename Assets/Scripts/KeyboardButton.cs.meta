@@ -1,10 +1,7 @@
 fileFormatVersion: 2
-guid: b9eeccca21816114f84e1ab57e393785
-labels:
-- ExQDev
-- VirtualKBoard
-timeCreated: 1471880019
-licenseType: Store
+guid: b70bdcd51c97b5d4dbd1e508c35ecc44
+timeCreated: 1480532978
+licenseType: Free
 MonoImporter:
   serializedVersion: 2
   defaultReferences: []

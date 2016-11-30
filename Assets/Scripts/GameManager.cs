@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour {
     public static int score;
     public static int currentLevel;
     public static int killCount;
-
+  
     private float currDelay;
     private float spawnTimer;
     private float pauseTimer;
@@ -101,6 +101,16 @@ public class GameManager : MonoBehaviour {
 
     public void PauseGame() {        
         gamePause = true;
+    }
+
+    public void EndGame() {
+        if(!endMenu.activeSelf) { //Makes sure not called multiple times(?)
+            Debug.Log("EndGame");
+            endMenu.SetActive(true);
+            scoreBoard.SetActive(false);
+            LeaderboardScript.updatedScore = false;
+            //LeaderboardScript.instance.UpdateScores();
+        }        
     }
 
     public void ResetGame() {

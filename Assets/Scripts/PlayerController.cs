@@ -180,6 +180,6 @@ public class PlayerController : MonoBehaviour {
         regenCooldown = 0.0f;
         health = maxHealth;
         isDead = false;
-        GameManager.instance.endMenu.SetActive(true);        
+        GameManager.instance.EndGame();        
     }
 }

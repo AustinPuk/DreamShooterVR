@@ -61,12 +61,10 @@ public class Gun : MonoBehaviour {
                     button1.OnClick();
                 }
                 else {
-                    /* Start button TODO
-                    ResetButton button1 = rayInfo.collider.GetComponent<ResetButton>();
-                    if (button1 != null) {
-                        button1.OnClick();
-                    }
-                    */
+                    KeyboardButton key = rayInfo.collider.GetComponent<KeyboardButton>();
+                    if (key != null) {
+                        key.OnClick();
+                    } 
                 }
             }            
 

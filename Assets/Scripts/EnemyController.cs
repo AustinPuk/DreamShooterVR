@@ -24,6 +24,12 @@ public class EnemyController : MonoBehaviour {
     [SerializeField]
     private float hitRate = 3.0f;
 
+    [SerializeField]
+    private int deathScore;
+
+    [SerializeField]
+    private int hitScore;
+
     private Animator myAnimator;
 
     private bool isSinking = false;
@@ -84,10 +90,11 @@ public class EnemyController : MonoBehaviour {
     public void takeDamage() {
         if (!isDead) {
             health -= (10 - defense);
+            GameManager.score += hitScore;
             blood.Stop();
             blood.Play();
             if (health <= 0.0f) {
-                GameManager.score += 500;
+                GameManager.score += deathScore;
                 GameManager.killCount++;
                 isDead = true;
                 myAnimator.SetTrigger("Dies");

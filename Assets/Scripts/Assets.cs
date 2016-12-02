@@ -7,6 +7,7 @@ public class Assets : MonoBehaviour {
    
     public static readonly GameObject player = Resources.Load<GameObject>(prefabsPath + "Player");
     //public static readonly GameObject enemy = Resources.Load<GameObject>(prefabsPath + "Enemy");
-    //public static GameObject bear = Resources.Load<GameObject>(prefabsPath + "ZomBear");
-    //public static GameObject bunny = Resources.Load<GameObject>(prefabsPath + "Zombunny");    
+    public static readonly GameObject bear = Resources.Load<GameObject>(prefabsPath + "ZomBear");
+    public static readonly GameObject bunny = Resources.Load<GameObject>(prefabsPath + "Zombunny");
+    public static readonly GameObject elephant = Resources.Load<GameObject>(prefabsPath + "Hellephant");
 }

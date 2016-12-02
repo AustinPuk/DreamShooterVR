@@ -22,11 +22,14 @@ public class LeaderboardScript : MonoBehaviour {
     private int[] topScores = new int[10];
     private string[] topNames = new string[10];
 
+    private int lastUpdate;
+
     void Awake() {
         instance = this;
-        currentPlayer = "ZZZ";
+        currentPlayer = "";
         updatedScore = false;
         keyTimer = 0;
+        lastUpdate = -1;
     }
 
 	// Use this for initialization
@@ -35,6 +38,8 @@ public class LeaderboardScript : MonoBehaviour {
 	}
 
     void loadLeaderboard() {
+        topScores = new int[10];
+        topNames = new string[10];
         for (int i = 0; i < 10; i++) {
             if(PlayerPrefs.HasKey("Score " + i) && !resetScores) {
                 topScores[i] = PlayerPrefs.GetInt("Score " + i);
@@ -55,15 +60,33 @@ public class LeaderboardScript : MonoBehaviour {
     }    
 
     void Update() {
-        playerText.text = currentPlayer;
+        playerText.text = currentPlayer;        
         if (keyTimer >= 0) keyTimer -= Time.deltaTime;
     }
 	
 	public void UpdateScores () {
 
         //Can only update once per game
-        if (updatedScore)
-            return;
+        if (updatedScore) {
+            if (lastUpdate != -1) {
+                topNames[lastUpdate] = currentPlayer;
+
+                //Save Updated Scores to Disk
+                PlayerPrefs.DeleteAll();
+                for (int i = 0; i < 10; i++) {
+                    PlayerPrefs.SetInt("Score " + i, topScores[i]);
+                    PlayerPrefs.SetString("Player " + i, topNames[i]);
+                }
+                PlayerPrefs.Save();
+
+                //Updates Text on Leaderboard
+                myText.text = "Leaderboard \n";
+                for (int i = 0; i < 10; i++) {
+                    myText.text += topNames[i] + " " + topScores[i].ToString("0000000") + "\n";
+                }
+                return;
+            }            
+        }            
 
         updatedScore = true;
 
@@ -78,16 +101,18 @@ public class LeaderboardScript : MonoBehaviour {
                     if (i == 0) {
                         topScores[0] = GameManager.score;
                         topNames[0] = currentPlayer;
+                        lastUpdate = 0;
                     }
                 }
                 else {
                     topScores[i + 1] = GameManager.score;
                     topNames[i + 1] = currentPlayer;
+                    lastUpdate = i + 1;
+                    break;
                 }
             }
         }
         
-
         //Save Updated Scores to Disk
         PlayerPrefs.DeleteAll();
         for (int i = 0; i < 10; i++) {
@@ -100,6 +125,6 @@ public class LeaderboardScript : MonoBehaviour {
         myText.text = "Leaderboard \n"; 
         for (int i = 0; i < 10; i++) {
             myText.text += topNames[i] + " " + topScores[i].ToString("0000000") + "\n";
-        }   
+        }
     }
 }

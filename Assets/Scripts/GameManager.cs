@@ -49,9 +49,12 @@ public class GameManager : MonoBehaviour {
     void Awake() {
         instance = this;
         player = GameObject.FindGameObjectWithTag("Player");
-        enemies[0] = Resources.Load<GameObject>("Prefabs/" + "ZomBear");
-        enemies[1] = Resources.Load<GameObject>("Prefabs/" + "Zombunny");
-        enemies[2] = Resources.Load<GameObject>("Prefabs/" + "Hellephant");
+        //enemies[0] = Resources.Load<GameObject>("Prefabs/" + "ZomBear");
+        //enemies[1] = Resources.Load<GameObject>("Prefabs/" + "Zombunny");
+        //enemies[2] = Resources.Load<GameObject>("Prefabs/" + "Hellephant");
+        enemies[0] = Assets.bear;
+        enemies[1] = Assets.bunny;
+        enemies[2] = Assets.elephant;
         endMenu.SetActive(false);
         currentLevel = 1;
         currentStep = 1;
@@ -93,10 +96,6 @@ public class GameManager : MonoBehaviour {
             gamePause = true;
             pauseTimer = pauseLength;
         } 
-        
-        if(endMenu.activeSelf) {
-            scoreBoard.SetActive(false);
-        }
     }
 
     public void PauseGame() {        
@@ -107,8 +106,8 @@ public class GameManager : MonoBehaviour {
         if(!endMenu.activeSelf) { //Makes sure not called multiple times(?)
             Debug.Log("EndGame");
             endMenu.SetActive(true);
-            scoreBoard.SetActive(false);
             LeaderboardScript.updatedScore = false;
+            gamePause = true;
             //LeaderboardScript.instance.UpdateScores();
         }        
     }
